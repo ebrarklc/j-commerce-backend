@@ -1,27 +1,26 @@
 package com.jcommerce;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
 
-@Path("/products") // tarayıcıda bu adrese gidince çalışır
+@Path("/products")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ProductResource {
 
-    @GET // veri isteme metodu
-    @Produces(MediaType.APPLICATION_JSON) // cevabı json formatında ver
-    public List<product> getALLProducts(){
-        // sanki veritabanından çekiyormuşuz gibi sahte bir liste yapalım
-        List<product> products = new ArrayList<>();
+    @GET
+    public List<Product> getAllProducts() {
+        // SQL: SELECT * FROM Product
+        return com.jcommerce.Product.listAll();
+    }
 
-        // listeye ürün ekleyelim
-        products.add(new product(1L, "Laptop",25000.0, true));
-        products.add(new product(2L,"Mouse",500.0, true));
-        products.add(new product(3L, "Klavye",1200.0,false)); // stokta yok
-
-        return products;// quarkus bunu otomatik json a çevirir
-
+    @POST
+    @Transactional // Veritabanına yazma işlemi olduğu için "Transaction" şart
+    public Product addProduct(Product product) {
+        // SQL: INSERT INTO Product ...
+        product.persist();
+        return product;
     }
 }
