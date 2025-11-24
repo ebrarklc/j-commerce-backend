@@ -1,6 +1,6 @@
 package com.jcommerce;
 
-import jakarta.transaction.Transactional;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
@@ -10,17 +10,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProductResource {
 
+    @Inject
+    ProductService service;
+
     @GET
     public List<Product> getAllProducts() {
-        // SQL: SELECT * FROM Product
-        return com.jcommerce.Product.listAll();
+        return service.tumUrunleriGetir();
     }
 
     @POST
-    @Transactional // Veritabanına yazma işlemi olduğu için "Transaction" şart
     public Product addProduct(Product product) {
-        // SQL: INSERT INTO Product ...
-        product.persist();
+        service.urunEkle(product);
         return product;
     }
 }
