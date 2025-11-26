@@ -29,4 +29,34 @@ public class ProductService {
         //O yüzden Panache kütüphanesinde komutumuz: .persist()
 
     }
+
+    @Transactional
+    public Product urunGuncelle(Long id, Product yeniBilgiler){
+        // adım 1 ürünü ıd ile bul
+        Product mevcutUrun = Product.findById(id);
+
+        // adım 2 eer ürün yoksa (null ise) hata fırlat
+        if(mevcutUrun==null){
+            throw new IllegalArgumentException("Ürün Bulunamadı! ID:" + id);
+        }
+
+        // adım 3 Bilgileri güncelle
+        mevcutUrun.name = yeniBilgiler.name;
+        mevcutUrun.price = yeniBilgiler.price;
+        mevcutUrun.inStock = yeniBilgiler.inStock;
+
+        return mevcutUrun;
+    }
+
+    @Transactional
+    public void urunSil(Long id){
+        // adım 1 silinecek ürün var mı kontrol et (tıpkı update daki gibi)
+        boolean silindiMi = Product.deleteById(id);
+
+        // adım 2 eğer silinmediyse (yani öyle bir ürün yoksa ) false döner
+        if (!silindiMi){
+            throw new IllegalArgumentException("Silinecek Ürün Bulunamadı! ID:" + id);
+        }
+    }
+
 }
